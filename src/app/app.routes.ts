@@ -4,6 +4,7 @@ import { HomeComponent } from './UI/components/home/home.component';
 import { ContactusComponent } from './UI/components/contactus/contactus.component';
 import { FullscreenComponent } from './UI/layouts/fullscreen/fullscreen.component';
 import { LoginComponent } from './UI/components/login/login.component';
+import { RegisterComponent } from './UI/components/register/register.component';
 
 export const routes: Routes = [
     {path: '',redirectTo:'/fullscreen/login',pathMatch:'full'},
@@ -26,8 +27,14 @@ export const routes: Routes = [
         component:FullscreenComponent,
         children : [
             {
+                //fullscreen/login
                 path: 'login',
                 component: LoginComponent
+            },
+            {
+                //fullscreen/register
+                path: 'register',
+                component: RegisterComponent
             }
         ]
     }
