@@ -5,12 +5,14 @@ import { ContactusComponent } from './UI/components/contactus/contactus.componen
 import { FullscreenComponent } from './UI/layouts/fullscreen/fullscreen.component';
 import { LoginComponent } from './UI/components/login/login.component';
 import { RegisterComponent } from './UI/components/register/register.component';
+import { authenticationGuard } from './UI/shared/guards/auth-guard.guard';
 
 export const routes: Routes = [
     {path: '',redirectTo:'/fullscreen/login',pathMatch:'full'},
     {
         path:'',
         component: DefaultComponent,
+        canActivate:[authenticationGuard],
         children: [
             {
                 path:'home',

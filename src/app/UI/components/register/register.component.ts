@@ -1,4 +1,5 @@
 import { NgFor, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule,NgIf,NgFor],
+  imports: [ReactiveFormsModule, NgIf, NgFor],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
@@ -14,26 +15,28 @@ export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   public validationMessages = {
     name: [
-      {type:'pattern', message:'Solo se permiten letras y espacios'},
-      {type:'required', message:'Este campo es requerido'}
+      { type: 'pattern', message: 'Solo se permiten letras y espacios' },
+      { type: 'required', message: 'Este campo es requerido' }
     ],
-    lastname: [
-      {type:'pattern', message:'Solo se permiten letras y espacios'},
-      {type:'required', message:'Este campo es requerido'}
+    phone: [
+      { type: 'required', message: 'Este campo es requerido' }
+    ],
+    identification: [
+      { type: 'required', message: 'Este campo es requerido' }
     ],
     email: [
-      {type:'email', message:'Solo se permiten campos de tipo email'},
-      {type:'required', message:'Este campo es requerido'}
+      { type: 'email', message: 'Solo se permiten campos de tipo email' },
+      { type: 'required', message: 'Este campo es requerido' }
     ],
     password: [
-      {type:'required', message:'Este campo es requerido'},
-      { type: 'pattern',message:'La contraseña debe tener por lo menos 8 caracteres, una minuscula, una mayuscula y un caracter especial'},
+      { type: 'required', message: 'Este campo es requerido' },
+      { type: 'pattern', message: 'La contraseña debe tener por lo menos 8 caracteres, una minuscula, una mayuscula y un caracter especial' },
     ],
     terms: [
-      {type:'required', message:'Se deben aceptar los terminos y condiciones'}
+      { type: 'required', message: 'Se deben aceptar los terminos y condiciones' }
     ]
   }
-  constructor(private formBuilder: FormBuilder, private router: Router) { }
+  constructor(private formBuilder: FormBuilder, private router: Router, private http: HttpClient) { }
 
   public get getControls() {
     return this.registerForm.controls
@@ -49,11 +52,16 @@ export class RegisterComponent implements OnInit {
             Validators.pattern(/^[a-zA-Z\s]+$/)
           ]
         ],
-        lastname: [
+        identification: [
           '',
           [
             Validators.required,
-            Validators.pattern(/^[a-zA-Z\s]+$/)
+          ]
+        ],
+        phone: [
+          '',
+          [
+            Validators.required,
           ]
         ],
         email: [
@@ -82,11 +90,29 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    if(this.registerForm.valid)
-    {
-      this.router.navigate(['/fullscreen/login'])
+    if (this.registerForm.valid) {
+      var email = this.registerForm.controls['email'].value;
+      var name = this.registerForm.controls['name'].value;
+      var password = this.registerForm.controls['password'].value;
+      var phone = this.registerForm.controls['phone'].value;
+      var identification = this.registerForm.controls['identification'].value;
+      this.http.post('http://localhost:3000/users/signup', { email, name, password, phone, identification }).subscribe(
+        (data: any) => {
+          if (data) {
+            alert(`El usuario ${data.user.name} fue creado con exito`)
+            this.router.navigate(['/fullscreen/login'])
+            return;
+          }
+        },
+        (error) => {
+          alert(error.error.message)
+          return;
+        }
+      );
+    }
+    else {
+      alert('Formulario no valido')
       return;
     }
-    alert('Formulario no valido')
   }
 }
