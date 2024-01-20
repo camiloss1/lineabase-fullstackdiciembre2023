@@ -38,8 +38,9 @@ export class GenericService {
 
     }
     public patch<T>(){
-        
+
     }
+    
     handleError(error: HttpErrorResponse): any {
         if(error.error != null && error.error.message === 'No Auth') {
             this.router.navigate(['/']);
