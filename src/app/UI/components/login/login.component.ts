@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { Userusecase } from '../../../domain/usecases/userusecase';
 
 @Component({
   selector: 'app-login',
@@ -25,24 +26,31 @@ export class LoginComponent implements OnInit {
       { type: 'minlength', message: 'Este campo debe tener por lo menos 9 caracteres' }
     ]
   }
-  constructor(private router: Router, private formBuilder: FormBuilder, private http: HttpClient) { }
+  constructor(private router: Router, private formBuilder: FormBuilder, private http: HttpClient, private _userUseCase:Userusecase) { }
   login() {
     if (this.loginForm.valid) {
       var user = this.loginForm.controls['email'].value;
       var password = this.loginForm.controls['password'].value;
-      this.http.post('http://localhost:3000/users/login', { email: user, password }).subscribe(
-        (data: any) => {
-          if (data.token) {
-            localStorage.setItem('token', data.token)
-            this.router.navigate(['/home'])
-            return;
-          }
-        },
-        (error) => {
-          alert(error.error.message)
+      // this.http.post('http://localhost:3000/users/login', { email: user, password }).subscribe(
+      //   (data: any) => {
+      //     if (data.token) {
+      //       localStorage.setItem('token', data.token)
+      //       this.router.navigate(['/home'])
+      //       return;
+      //     }
+      //   },
+      //   (error) => {
+      //     alert(error.error.message)
+      //     return;
+      //   }
+      // );
+      this._userUseCase.login(user, password).subscribe((data:any) => {
+        if(data){
+          localStorage.setItem('token',data.token);
+          this.router.navigate(['/home'])
           return;
         }
-      );
+      })
     }
     else {
       alert('El formulario no es valido')

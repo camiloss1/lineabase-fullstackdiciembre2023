@@ -27,7 +27,7 @@ export class GenericService {
             }),
         );
     }
-    public post<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders) {
+    public post<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders): Observable<any> {
         return this.http.post<T>(`${url}/${endpoint}`, model, { headers }).pipe(
             retryWhen(errors => errors.pipe(
                 concatMap((result: any) => {
@@ -46,7 +46,7 @@ export class GenericService {
         );
     }
 
-    public put<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders) {
+    public put<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders): Observable<any> {
         return this.http.put<T>(`${url}/${endpoint}`, model, { headers }).pipe(
             retryWhen(errors => errors.pipe(
                 concatMap((result: any) => {
@@ -64,7 +64,7 @@ export class GenericService {
             }),
         );
     }
-    public delete<T>(url?: string, endpoint?: string, headers?: HttpHeaders) {
+    public delete<T>(url?: string, endpoint?: string, headers?: HttpHeaders): Observable<any> {
         return this.http.delete(`${url}/${endpoint}`, { headers }).pipe(
             retryWhen(errors => errors.pipe(
                 concatMap((result: any) => {
@@ -82,7 +82,7 @@ export class GenericService {
             }),
         );
     }
-    public patch<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders) {
+    public patch<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders): Observable<any> {
         return this.http.patch<T>(`${url}/${endpoint}`, model, { headers }).pipe(
             retryWhen(errors => errors.pipe(
                 concatMap((result: any) => {
