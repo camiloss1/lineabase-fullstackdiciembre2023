@@ -7,7 +7,7 @@ import { Observable, catchError, concat, concatMap, delay, of, retryWhen, take, 
     providedIn: 'root'
 })
 export class GenericService {
-    constructor(private http: HttpClient, private router:Router) { }
+    constructor(private http: HttpClient, private router: Router) { }
     public get<T>(url?: string, endpoint?: string, params?: string, headers?: HttpHeaders): Observable<any> {
         const endpointUri = params ? `${endpoint}/` : `${endpoint}`;
         return this.http.get<T>(`${url}/${endpointUri}` + (params ?? ''), { headers }).pipe(
@@ -22,31 +22,91 @@ export class GenericService {
                 take(4),
                 o => concat(o, throwError(`No fue posible conectarse al servidor`))
             )),
-            catchError((err:HttpErrorResponse) => {
+            catchError((err: HttpErrorResponse) => {
                 return this.handleError(err);
             }),
         );
     }
-    public post<T>(){
-
+    public post<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders) {
+        return this.http.post<T>(`${url}/${endpoint}`, model, { headers }).pipe(
+            retryWhen(errors => errors.pipe(
+                concatMap((result: any) => {
+                    if (result.code == 504) {
+                        return of(result);
+                    }
+                    return throwError(result);
+                }),
+                delay(1000),
+                take(4),
+                o => concat(o, throwError(`No fue posible conectarse al servidor`))
+            )),
+            catchError((err: HttpErrorResponse) => {
+                return this.handleError(err);
+            }),
+        );
     }
 
-    public put<T>(){
-
+    public put<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders) {
+        return this.http.put<T>(`${url}/${endpoint}`, model, { headers }).pipe(
+            retryWhen(errors => errors.pipe(
+                concatMap((result: any) => {
+                    if (result.code == 504) {
+                        return of(result);
+                    }
+                    return throwError(result);
+                }),
+                delay(1000),
+                take(4),
+                o => concat(o, throwError(`No fue posible conectarse al servidor`))
+            )),
+            catchError((err: HttpErrorResponse) => {
+                return this.handleError(err);
+            }),
+        );
     }
-    public delete <T>(){
-
+    public delete<T>(url?: string, endpoint?: string, headers?: HttpHeaders) {
+        return this.http.delete(`${url}/${endpoint}`, { headers }).pipe(
+            retryWhen(errors => errors.pipe(
+                concatMap((result: any) => {
+                    if (result.code == 504) {
+                        return of(result);
+                    }
+                    return throwError(result);
+                }),
+                delay(1000),
+                take(4),
+                o => concat(o, throwError(`No fue posible conectarse al servidor`))
+            )),
+            catchError((err: HttpErrorResponse) => {
+                return this.handleError(err);
+            }),
+        );
     }
-    public patch<T>(){
-
+    public patch<T>(url?: string, endpoint?: string, model?: any, headers?: HttpHeaders) {
+        return this.http.patch<T>(`${url}/${endpoint}`, model, { headers }).pipe(
+            retryWhen(errors => errors.pipe(
+                concatMap((result: any) => {
+                    if (result.code == 504) {
+                        return of(result);
+                    }
+                    return throwError(result);
+                }),
+                delay(1000),
+                take(4),
+                o => concat(o, throwError(`No fue posible conectarse al servidor`))
+            )),
+            catchError((err: HttpErrorResponse) => {
+                return this.handleError(err);
+            }),
+        );
     }
-    
+
     handleError(error: HttpErrorResponse): any {
-        if(error.error != null && error.error.message === 'No Auth') {
+        if (error.error != null && error.error.message === 'No Auth') {
             this.router.navigate(['/']);
             localStorage.clear();
         }
-        let messageError = error.error != null ? `El Servicio presenta el siguiente error: ${error.message}`: '';
+        let messageError = error.error != null ? `El Servicio presenta el siguiente error: ${error.message}` : '';
         console.log(messageError);
         return throwError(error);
     }
