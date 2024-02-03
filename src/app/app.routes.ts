@@ -6,6 +6,7 @@ import { FullscreenComponent } from './UI/layouts/fullscreen/fullscreen.componen
 import { LoginComponent } from './UI/components/login/login.component';
 import { RegisterComponent } from './UI/components/register/register.component';
 import { authenticationGuard } from './UI/shared/guards/auth-guard.guard';
+import { EventDetailComponent } from './UI/components/event-detail/event-detail.component';
 
 export const routes: Routes = [
     {path: '',redirectTo:'/fullscreen/login',pathMatch:'full'},
@@ -17,6 +18,10 @@ export const routes: Routes = [
             {
                 path:'home',
                 component: HomeComponent
+            },
+            {
+                path:'eventDetail/:eventId',
+                component: EventDetailComponent
             },
             {
                 path:'contact',

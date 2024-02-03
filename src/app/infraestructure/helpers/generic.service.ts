@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable, catchError, concat, concatMap, delay, of, retryWhen, take, throwError } from "rxjs";
@@ -9,8 +9,9 @@ import { Observable, catchError, concat, concatMap, delay, of, retryWhen, take, 
 export class GenericService {
     constructor(private http: HttpClient, private router: Router) { }
     public get<T>(url?: string, endpoint?: string, params?: string, headers?: HttpHeaders): Observable<any> {
-        const endpointUri = params ? `${endpoint}/` : `${endpoint}`;
-        return this.http.get<T>(`${url}/${endpointUri}` + (params ?? ''), { headers }).pipe(
+        // const endpointUri = params ? `${endpoint}/` : `${endpoint}`;
+        const paramsRequest = new HttpParams({ fromString: params });
+        return this.http.get<T>(`${url}/${endpoint}`, { headers, params: paramsRequest }).pipe(
             retryWhen(errors => errors.pipe(
                 concatMap((result: any) => {
                     if (result.code == 504) {
